@@ -15,7 +15,6 @@ services:
       - ./data:/app/data
       - ./static_dir:/app/static_dir
       - ./src:/app/src
-      - ./main.py:/app/main.py
     develop:
       watch:
         - action: sync

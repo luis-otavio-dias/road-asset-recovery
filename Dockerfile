@@ -46,4 +46,4 @@ ENTRYPOINT []
 WORKDIR /app
 
 
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8001", "main:app", "--reload"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8001", "--app-dir", "src", "main:app", "--reload"]
