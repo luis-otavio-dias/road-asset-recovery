@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "fastapi>=0.138.2",
     "pandas>=3.0.3",
     "requests>=2.34.2",
+    "uvicorn>=0.49.0",
 ]
 
 [tool.ruff]
@@ -19,9 +21,9 @@ exclude = [".venv"]
 
 
 [tool.ruff.lint]
-select = ["ALL"]
+select = ["E", "F"]
 ignore = [
-  "T201",   # Checks for print statements, 
+  "T201",   # Checks for print statements,
   "COM812", # Checks for the absence of trailing commas.
   "INP001", # Checks for packages that are missing an __init__.py file.
   "D",      # All pydocstyle (D)
