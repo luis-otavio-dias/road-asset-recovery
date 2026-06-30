@@ -1,0 +1,34 @@
+services:
+  road-asset-recovery:
+    pull_policy: never
+    image: road-asset-recovery
+    container_name: road-asset-recovery
+    hostname: road-asset-recovery
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./data:/app/data
+      - ./static_dir:/app/static_dir
+      - ./src:/app/src
+      - ./main.py:/app/main.py
+    develop:
+      watch:
+        - action: sync
+          path: ./static_dir
+          target: /app/static_dir
+
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+
+          ignore:
+            - .venv/
+            - __pycache__/
+
+        - action: rebuild
+          path: ./uv.lock
