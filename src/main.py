@@ -44,7 +44,7 @@ def get_assets_along_route(route_coords, headers=headers, search_radius=20):
     overpass_coords = ", ".join([f"{lat},{lon}" for lon, lat in route_coords])
 
     query = f"""
-    [out:json][timeout:180];
+    [out:json][timeout:300];
     (
       node["traffic_sign"~"^BR:"](
         around:{search_radius}, {overpass_coords}
@@ -88,11 +88,39 @@ def classify_sign(osm_code):
 def search_assets(
     start_lat: float, start_lon: float, end_lat: float, end_lon: float
 ):
-    route_coords = get_route_coordinates(
-        start_lat, start_lon, end_lat, end_lon
-    )
+    try:
+        route_coords = get_route_coordinates(
+            start_lat, start_lon, end_lat, end_lon
+        )
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"OSRM API connection error: {str(e)}",
+        )
+    except (IndexError, KeyError):
+        raise HTTPException(
+            status_code=404,
+            detail="Could not find a valid route for the provided coordinates.",
+        )
 
-    response = get_assets_along_route(route_coords)
+    try:
+        response = get_assets_along_route(route_coords)
+    except requests.exceptions.HTTPError as e:
+        status = e.response.status_code if e.response else 502
+        raise HTTPException(
+            status_code=status,
+            detail=f"Overpass API returned an error: {e}",
+        )
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Overpass API connection error: {str(e)}",
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=502,
+            detail="Received invalid data from Overpass API.",
+        )
 
     if not response or "elements" not in response:
         raise HTTPException(
