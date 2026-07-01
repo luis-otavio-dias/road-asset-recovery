@@ -9,12 +9,15 @@ services:
       context: .
       dockerfile: Dockerfile
       target: development
+    user: "${UID:-1000}:${GID:-1000}"
     ports:
       - "8001:8001"
     volumes:
       - ./data:/app/data
       - ./static_dir:/app/static_dir
       - ./src:/app/src
+    env_file:
+      - .env
     develop:
       watch:
         - action: sync
