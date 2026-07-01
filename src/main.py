@@ -44,7 +44,7 @@ def get_assets_along_route(route_coords, headers=headers, search_radius=20):
     overpass_coords = ", ".join([f"{lat},{lon}" for lon, lat in route_coords])
 
     query = f"""
-    [out:json][timeout:300];
+    [out:json][timeout:320];
     (
       node["traffic_sign"~"^BR:"](
         around:{search_radius}, {overpass_coords}
@@ -58,7 +58,7 @@ def get_assets_along_route(route_coords, headers=headers, search_radius=20):
 
     overpass_url = "http://overpass-api.de/api/interpreter"
     response = requests.post(
-        overpass_url, data={"data": query}, headers=headers, timeout=320
+        overpass_url, data={"data": query}, headers=headers, timeout=340
     )
     response.raise_for_status()
 
@@ -100,7 +100,7 @@ def search_assets(
     except (IndexError, KeyError):
         raise HTTPException(
             status_code=404,
-            detail="Could not find a valid route for the provided coordinates.",
+            detail="Could not find valid route for the provided coordinates.",
         )
 
     try:
